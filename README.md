@@ -923,3 +923,654 @@ FileInputStream fis = new FileInputStream("C:\\Users\\10001926\\eclipse-workspac
 extend base from end to end testing tutorial video
 ---------------------------------------------------
 
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+	import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+public class datadriven {
+
+
+    public static void main(String[] args) throws IOException, FileNotFoundException {
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\10001926\\JavaDependencies\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.get("https://test.casso.dollarbank.com/Admin/AdministrativeLogon/AdministrativeLogon.aspx");
+
+
+
+        FileInputStream fis = new FileInputStream("C:\\Users\\10001926\\eclipse-workspace\\testdata.xlsx");
+        XSSFWorkbook workBook = new XSSFWorkbook(fis);
+        XSSFSheet sheet = workBook.getSheet("Sheet1");
+        int noOfColoumns = sheet.getRow(0).getLastCellNum();
+        String[] Headers = new String[noOfColoumns];
+        for(int j=0;j<noOfColoumns;j++) {
+            Headers[j] = sheet.getRow(0).getCell(j).getStringCellValue();
+        }
+
+        int noOfRows = sheet.getLastRowNum();
+        for(int k=1;k<=noOfRows;k++) {
+          for (int a = 0; a < noOfColoumns; a++) {
+              if (Headers[a].equals("Username")) {
+                 sheet.getRow(k).getCell(a).getNumericCellValue();
+                  driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pUserID']")).sendKeys(sheet.getRow(k).getCell(a).getStringCellValue());
+                  driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pUserID']")).clear();
+              }
+              if (Headers[a].equals("Password")) {
+                  driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pPassword']")).sendKeys(sheet.getRow(k).getCell(a).getStringCellValue());
+                  driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pPassword']")).clear();
+
+
+              }
+              if (Headers[a].equals("Address")) {
+                  String Address = sheet.getRow(k).getCell(a).getStringCellValue();
+
+              }
+              if (Headers[a].equals("Phone")) {
+                  String Phone = sheet.getRow(k).getCell(a).getStringCellValue();
+
+              }
+
+
+
+
+              /* Login */
+                                      //Enter Username
+
+          }
+      }
+
+
+
+
+    }
+
+}				
+	
+	
+	
+	
+	
+	
+	
+	
+`````````````````````````````````````````````````````````````````````````````````````````````````
+	package com.dollarbank;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+public class ACIAdminPlayGround {
+
+    DataFormatter formatter = new DataFormatter();
+    String driverPath = "C:\\Users\\10001926\\JavaDependencies\\chromedriver.exe";
+    public WebDriver driver;
+
+
+
+    @Test(dataProvider="drivedata")
+    public void testcase(String masterCompanyAccountNumber, String socialSecurityArray, String companyName, String companyDivision, String accountName, String userID, String userName, String userEmail, String userMobileNumber, String nameOfEntity, String placeHolder, String nickName) throws InterruptedException {
+        //long masterCompanyAccountNumber = 52671243293L;  5 for checking account and 4 for savings account
+       //int[] socialSecurityArray = {208840076,251068614,256001017};
+        // String companyName = "Patels Automation60";
+       // String accountName = "Checking60";
+      //  String userID = "automate60";
+     //   String userName = "automate60";
+     //   String userEmail = "ipatel744@dollarbank.com";
+    //    String userMobileNumber = "4122610000";
+   //     String[] nameOfEntity = {"CAMOSUN COLLEGE","HERITAGE WOODS SECONDARY SCHOOL","SOLUTIA"};         // Name of company if one SSN is given to more than one company
+      //  int companyDivision = 1;                                       //1 = Pittsburgh , 2= Ohio
+       // int[] modifyAccountsAlerts = {0};
+    //    long[] placeHolder = {52670857574L, 52671243293L};                    // account number to for a company nickname
+     //   String[] nickName = {"MyName","YourName"};                            //nickname to a company
+
+
+        System.setProperty("webdriver.chrome.driver", driverPath);
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.get("https://test.casso.dollarbank.com/Admin/AdministrativeLogon/AdministrativeLogon.aspx");
+
+        driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pUserID']")).sendKeys("Ishit");
+        driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pPassword']")).sendKeys("Ishit@2021");
+        driver.findElement(By.xpath("//input[@name = 'ctl00$BodyContentPlaceHolder$pSubmit']")).click();
+        Assert.assertEquals(driver.findElement(By.id("PageHeader-Title")).getText(), "Welcome to the CashANALYZER Administration Site");
+
+        driver.findElement(By.xpath("//*[@id=\"CompanyMaintenance-Tab\"]/span")).click();                                                                 //COMPANY Tab in upper module
+        Assert.assertEquals("Company Maintenance", "Company Maintenance");                                                                                // Company Tab
+        driver.findElement(By.cssSelector("input[name ='ctl00$BodyContentPlaceHolder$AddButton']")).click();                                              //Enroll Company
+        /* Company Overview */
+        Assert.assertEquals("Company Maintenance - Enroll Company Screen", "Company Maintenance - Enroll Company Screen");                               //Company Enrollment page
+        driver.findElement(By.cssSelector("input[name = 'ctl00$BodyContentPlaceHolder$pCompanyName']")).sendKeys(companyName);                           //Adding Company Name
+        driver.findElement(By.xpath("//input[@id = 'BodyContentPlaceHolder_pCompanyDivision" + companyDivision + "']")).click();                                         //Selecting Pittsburgh or Ohio Radio Button
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pMasterProfileAccount']")).sendKeys(masterCompanyAccountNumber);     //Master Profile Account number must include 5 or 4 in the beginning
+        /* CashAnalyzer Product Access */
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pAlertsAccess']")).click();                                        //Alerts
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pBusinessCdAccess']")).click();                                    //Business Cds
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pCorporateVisaAccess']")).click();                                 //Corporate Credit Card
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pAccountReconcilementAccess']")).click();                          //Reconcilement
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pRemoteDepositAccess']")).click();                                 //Remote Deposit
+        /* CashAnalyzer Multipurpose SSO Access */
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ssoOptions']")).click();                                           //Multipurpose SSO
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$loanActivity']")).click();                                         //Loan Activity
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$consolidatedReports']")).click();                                  //Consolidated Reports
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$availableHolds']")).click();                                       //Available Holds
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ContinueButton']")).click();                                       //Submit Company
+        /* Company maintenance review screen */
+        Assert.assertEquals("Company Maintenance - Review Screen", "Company Maintenance - Review Screen");                                             //Verifying Review Screen
+        driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ReviewCompanyButton']")).click();                                  //Submit Review Button
+        /* Verifying if company is created or not */
+        driver.findElement(By.id("BodyContentPlaceHolder_mSortByName")).click();                                                                       //Sort By Company Name
+        driver.findElement(By.id("BodyContentPlaceHolder_cbCompany_cbCompany_TextBox")).click();                                                       //Selecting checkbox
+        driver.findElement(By.id("BodyContentPlaceHolder_cbCompany_cbCompany_TextBox")).sendKeys(companyName);                                         //Entering CompanyName
+        driver.findElement(By.id("PageBody")).click();                                                                                                 //Clicking somewhere on page to select company
+        Assert.assertEquals(masterCompanyAccountNumber, masterCompanyAccountNumber);                                                                   //Verifying if company is created or not
+
+        driver.findElement(By.xpath("//*[@id=\"TaxID-Tab\"]/span")).click();                                                                            // Click on Tax ID Tab
+        Assert.assertEquals(companyName, companyName);                                                                                                  // Verifying company name
+
+        int p=0;
+        String[] nameOfEntityName =nameOfEntity.split(", ");
+        String[] ssn=socialSecurityArray.split(", ");
+        int social= ssn.length;
+       // for(String i:ssn) {
+        //}
+        for(int i=0;i<social;i++){
+            driver.findElement(By.id("BodyContentPlaceHolder_pTaxId")).sendKeys(ssn[i]);                                                    // Sending SSN Number in form of i
+            driver.findElement(By.id("BodyContentPlaceHolder_pCanDisplayBusinessCD_0")).click();                                                       // Business CD yes
+            driver.findElement(By.id("BodyContentPlaceHolder_pAddButton")).click();                                                                    // Submit button
+            //for (String j : nameOfEntity)
+            if (driver.getCurrentUrl().equals("https://test.casso.dollarbank.com/Admin/TaxIdMaintenance/SelectTaxEntity.aspx")) {
+                driver.findElement(By.xpath("//*[normalize-space(text())='" + nameOfEntityName[p] + "']/parent::tr/td[1]/input")).click();                 //normalize-space is to remove spaces and name of entity is a name of Company which user wants to select from a list
+                driver.findElement(By.id("BodyContentPlaceHolder_pAddButton")).click();
+                Assert.assertEquals("Tax ID Add Was Successful.", "Tax ID Add Was Successful.");
+                driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();
+
+            } else {
+                Assert.assertEquals("Tax ID Add Was Successful.", "Tax ID Add Was Successful.");                                                       //Verification of TaxID
+            }
+            p++;
+
+
+        }
+
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();                                                                        // Click on Accounts Tab
+        driver.findElement(By.id("BodyContentPlaceHolder_pSetupAccountsButton")).click();                                                              // Setup Accounts
+        int checkBox = driver.findElements(By.xpath("//table[@id='BodyContentPlaceHolder_pAvailableAcctsTable'] //input[@type='checkbox']")).size();
+        for (int k=1; k<=checkBox;k++) {
+            driver.findElement(By.xpath("(//td[@class='CheckBox'])[" + k + "]")).click();
+            WebElement accountNumberText= driver.findElement(By.xpath("(//td[@class='AccountNumber HighlightedColumn'])[" + k + "]"));
+            String accountNumberValue = accountNumberText.getText();
+            if(accountNumberValue.startsWith("5")) {
+                driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("Checking");
+            }
+            if(accountNumberValue.startsWith("4")){
+                driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("Savings");
+            }
+            if(accountNumberValue.startsWith("6")){
+                driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("CD");
+            }
+        }
+        int n=0;
+        String[] placeHolderName =placeHolder.split(", ");
+        String[] nickNameName =nickName.split(", ");
+
+        for(String l: placeHolderName) {
+            driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "']")).click();
+            driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "']")).click();
+            driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "TXT']")).clear();
+            driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "TXT']")).sendKeys(nickNameName[n]);
+            n++;
+        }
+        driver.findElement(By.id("BodyContentPlaceHolder_pAddAccountsButton")).click();                                                                // Add selected accounts
+        driver.findElement(By.id("BodyContentPlaceHolder_pConfirmAddAccountsButton")).click();                                                         // Confirm Add
+        Assert.assertEquals("Account Add Was Successful.", "Account Add Was Successful.");                                                             // Verification
+
+        driver.findElement(By.xpath("//*[@id=\"Users-Tab\"]/span")).click();
+        Assert.assertEquals("User Maintenance - Create New User", "User Maintenance - Create New User");
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAddNewUser")).click();                                                                      // Add new user button
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserId")).sendKeys(userID);                                                                   // Entering userID
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserName")).sendKeys(userName);                                                               // Entering userName
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserEmail")).sendKeys(userEmail);                                                             // Entering user email
+        driver.findElement(By.id("BodyContentPlaceHolder_mobileNumber")).sendKeys(userMobileNumber);                                                    // Entering user phone number
+        driver.findElement(By.id("BodyContentPlaceHolder_pTokenModel_2")).click();                                                                      // Non token radio button
+        driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCDAccess")).click();                                                                  // Business CDs
+        driver.findElement(By.id("BodyContentPlaceHolder_pCorporateVisaAccess")).click();                                                               // Corporate Credit Card
+        driver.findElement(By.id("BodyContentPlaceHolder_ssoAccess")).click();                                                                          // Multi purpose login
+        driver.findElement(By.id("BodyContentPlaceHolder_pARP")).click();                                                                               // Account Reconcilement
+        driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();                                                                            // Alerts
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAddContinue")).click();                                                                     // Continue button
+        Assert.assertEquals("User Maintenance - Approve User Changes", "User Maintenance - Approve User Changes");                                      // Verify Approve user changes
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAppContinue")).click();                                                                     // Continue button
+        Assert.assertEquals("Welcome Letter Generated.", "Welcome Letter Generated.");                                                                  // Verifying user created or not
+        driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();                                                                       // Close button
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();                                                                         // Clicking on Accounts Tab
+        int numberOfCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']")).size();
+        for (int j = 2; j < numberOfCheckboxes; j++) {
+            driver.findElement(By.xpath("//table[@id='BodyContentPlaceHolder_pCompanyAccountsTable']/tbody/tr["+j+"]/td/input")).click();
+            Thread.sleep(100L);
+            driver.findElement(By.id("BodyContentPlaceHolder_pEditAccountButton")).click();                                                                 // Modify Account
+          /*  for(int alerts : modifyAccountsAlerts){
+                if(alerts == 1){
+                                                                                       // Alerts
+                }
+            } */
+            driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();
+            driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCD")).click();                                                                        // Business Cds
+            driver.findElement(By.id("BodyContentPlaceHolder_reconcilements")).click();                                                                     // Reconcilement
+            driver.findElement(By.id("BodyContentPlaceHolder_pMultipurposeEdit")).click();                                                                  // Multi purpose SSO
+            driver.findElement(By.id("BodyContentPlaceHolder_pLoanActivityEdit")).click();                                                                  // Loan Activity
+            driver.findElement(By.id("BodyContentPlaceHolder_pAvailableHoldsEdit")).click();                                                                // Available holds
+            driver.findElement(By.id("BodyContentPlaceHolder_pConsolidatedReportsEdit")).click();                                                           // Consolidated reports
+            driver.findElement(By.id("BodyContentPlaceHolder_pContinue")).click();                                                                          // Continue button
+            driver.findElement(By.id("BodyContentPlaceHolder_pConfirm")).click();                                                                           // Confirm button
+            Assert.assertEquals("Account Access Edit Was Successful.", "Account Access Edit Was Successful.");                                              // Verification
+            driver.findElement(By.id("BodyContentPlaceHolder_pCancel")).click();                                                                            // Cancel button
+        }
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();
+        Assert.assertEquals("Account Maintenance", "Account Maintenance");
+        for (int j = 2; j < numberOfCheckboxes; j++) {
+            driver.findElement(By.xpath("//table[@id='BodyContentPlaceHolder_pCompanyAccountsTable']/tbody/tr[" +j+ "]/td/input")).click();
+            Thread.sleep(100L);
+            driver.findElement(By.id("BodyContentPlaceHolder_pEditAccountAccessButton")).click();
+            driver.findElement(By.name("ctl00$BodyContentPlaceHolder$AccountRepeater$ctl00$UserGroup")).click();
+            driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_addSelUser_0")).click();                                                    // Clicking on selected users
+            driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_confirmAddSelUser_0")).click();                                             // Confirming add user
+            driver.findElement(By.name("ctl00$BodyContentPlaceHolder$AccountRepeater$ctl00$UserGroup")).click();                                         // Selecting radio button again
+            driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_changeUserAccess_0")).click();                                              // Change user Access button
+            driver.findElement(By.id("BodyContentPlaceHolder_pARP")).click();                                                                            // Account reconcilement (ARP)
+            driver.findElement(By.id("BodyContentPlaceHolder_pARPInputIssue")).click();                                                                  // ARP Create single issue
+            driver.findElement(By.id("BodyContentPlaceHolder_pARPEditIssue")).click();                                                                   // Arp Edit Issue
+            driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();                                                                         // Alerts
+            driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCDPurchase")).click();                                                             // Business CD Purchase
+            driver.findElement(By.id("BodyContentPlaceHolder_pMultipurposeEdit")).click();                                                               // Multi purpose SSO
+            driver.findElement(By.id("BodyContentPlaceHolder_pLoanActivityEdit")).click();                                                               // Loan Activity
+            driver.findElement(By.id("BodyContentPlaceHolder_pAvailableHoldsEdit")).click();                                                             // Available holds
+            driver.findElement(By.id("BodyContentPlaceHolder_pConsolidatedReportsEdit")).click();                                                        // Consolidated reports
+            driver.findElement(By.id("BodyContentPlaceHolder_pContinue")).click();
+            driver.findElement(By.id("BodyContentPlaceHolder_pConfirm")).click();
+            Assert.assertEquals("User Account Permissions Successfully Updated.", "User Account Permissions Successfully Updated.");
+            driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();
+            driver.findElement(By.id("BodyContentPlaceHolder_cancel")).click();  // Cancel button
+        }
+
+    }
+
+
+
+
+
+
+
+
+    @DataProvider(name="drivedata")
+    public Object[][] getData() throws IOException {
+
+        FileInputStream fis= new FileInputStream("C:\\Users\\10001926\\eclipse-workspace\\testdata.xlsx");
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        int rowCount = sheet.getPhysicalNumberOfRows();
+        XSSFRow row = sheet.getRow(0);
+        int colCount=row.getLastCellNum();
+
+        Object data[][] = new Object[colCount-1][rowCount-1];
+        for(int i=0;i<rowCount-1;i++) {
+            row=sheet.getRow(i+1);
+            for(int j=0;j<colCount-1;j++) {
+                XSSFCell cell = row.getCell(j+1);
+                data[j][i] = formatter.formatCellValue(cell);
+
+
+            }
+        }
+        return data;
+
+    }
+
+    @AfterMethod
+    public void takeScreenShotOnFailure(ITestResult testResult) throws IOException {
+        if (testResult.getStatus() == ITestResult.FAILURE) {
+            System.out.println(testResult.getStatus());
+            File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, new File("errorScreenshots\\" + testResult.getName() +  ".jpg"));
+        }
+    }
+
+
+    }
+
+
+
+
+
+/*
+package com.dollarbank;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+public class ACIAdminPlayGround {
+
+    DataFormatter formatter = new DataFormatter();
+    String driverPath = "C:\\Users\\10001926\\JavaDependencies\\chromedriver.exe";
+    public WebDriver driver;
+
+
+
+    @Test(dataProvider="drivedata")
+    public void testcase(String masterCompanyAccountNumber, String socialSecurityArray, String companyName, String companyDivision, String accountName, String userID, String userName, String userEmail, String userMobileNumber, String nameOfEntity, String placeHolder, String nickName) throws InterruptedException {
+        //long masterCompanyAccountNumber = 52671243293L;  5 for checking account and 4 for savings account
+       //int[] socialSecurityArray = {208840076,251068614,256001017};
+        // String companyName = "Patels Automation60";
+       // String accountName = "Checking60";
+      //  String userID = "automate60";
+     //   String userName = "automate60";
+     //   String userEmail = "ipatel744@dollarbank.com";
+    //    String userMobileNumber = "4122610000";
+   //     String[] nameOfEntity = {"CAMOSUN COLLEGE","HERITAGE WOODS SECONDARY SCHOOL","SOLUTIA"};         // Name of company if one SSN is given to more than one company
+      //  int companyDivision = 1;                                       //1 = Pittsburgh , 2= Ohio
+       // int[] modifyAccountsAlerts = {0};
+    //    long[] placeHolder = {52670857574L, 52671243293L};                    // account number to for a company nickname
+     //   String[] nickName = {"MyName","YourName"};                            //nickname to a company
+
+
+        System.setProperty("webdriver.chrome.driver", driverPath);
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.get("https://test.casso.dollarbank.com/Admin/AdministrativeLogon/AdministrativeLogon.aspx");
+
+        driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pUserID']")).sendKeys("Ishit");
+        driver.findElement(By.xpath("//input[@name='ctl00$BodyContentPlaceHolder$pPassword']")).sendKeys("Ishit@2021");
+        driver.findElement(By.xpath("//input[@name = 'ctl00$BodyContentPlaceHolder$pSubmit']")).click();
+        Assert.assertEquals(driver.findElement(By.id("PageHeader-Title")).getText(), "Welcome to the CashANALYZER Administration Site");
+
+        driver.findElement(By.xpath("//*[@id=\"CompanyMaintenance-Tab\"]/span")).click();                                                                 //COMPANY Tab in upper module
+        Assert.assertEquals("Company Maintenance", "Company Maintenance");                                                                                // Company Tab
+        driver.findElement(By.cssSelector("input[name ='ctl00$BodyContentPlaceHolder$AddButton']")).click();                                              //Enroll Company
+
+        Assert.assertEquals("Company Maintenance - Enroll Company Screen", "Company Maintenance - Enroll Company Screen");                               //Company Enrollment page
+                driver.findElement(By.cssSelector("input[name = 'ctl00$BodyContentPlaceHolder$pCompanyName']")).sendKeys(companyName);                           //Adding Company Name
+                driver.findElement(By.xpath("//input[@id = 'BodyContentPlaceHolder_pCompanyDivision" + companyDivision + "']")).click();                                         //Selecting Pittsburgh or Ohio Radio Button
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pMasterProfileAccount']")).sendKeys(masterCompanyAccountNumber);     //Master Profile Account number must include 5 or 4 in the beginning
+                /* CashAnalyzer Product Access
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pAlertsAccess']")).click();                                        //Alerts
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pBusinessCdAccess']")).click();                                    //Business Cds
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pCorporateVisaAccess']")).click();                                 //Corporate Credit Card
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pAccountReconcilementAccess']")).click();                          //Reconcilement
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$pRemoteDepositAccess']")).click();                                 //Remote Deposit
+                /* CashAnalyzer Multipurpose SSO Access
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ssoOptions']")).click();                                           //Multipurpose SSO
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$loanActivity']")).click();                                         //Loan Activity
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$consolidatedReports']")).click();                                  //Consolidated Reports
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$availableHolds']")).click();                                       //Available Holds
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ContinueButton']")).click();                                       //Submit Company
+                /* Company maintenance review screen
+                Assert.assertEquals("Company Maintenance - Review Screen", "Company Maintenance - Review Screen");                                             //Verifying Review Screen
+                driver.findElement(By.cssSelector("input[name='ctl00$BodyContentPlaceHolder$ReviewCompanyButton']")).click();                                  //Submit Review Button
+                /* Verifying if company is created or not
+                driver.findElement(By.id("BodyContentPlaceHolder_mSortByName")).click();                                                                       //Sort By Company Name
+                driver.findElement(By.id("BodyContentPlaceHolder_cbCompany_cbCompany_TextBox")).click();                                                       //Selecting checkbox
+                driver.findElement(By.id("BodyContentPlaceHolder_cbCompany_cbCompany_TextBox")).sendKeys(companyName);                                         //Entering CompanyName
+                driver.findElement(By.id("PageBody")).click();                                                                                                 //Clicking somewhere on page to select company
+                Assert.assertEquals(masterCompanyAccountNumber, masterCompanyAccountNumber);                                                                   //Verifying if company is created or not
+
+                driver.findElement(By.xpath("//*[@id=\"TaxID-Tab\"]/span")).click();                                                                            // Click on Tax ID Tab
+                Assert.assertEquals(companyName, companyName);                                                                                                  // Verifying company name
+
+                int p=0;
+                String[] nameOfEntityName =nameOfEntity.split(", ");
+                String[] ssn=socialSecurityArray.split(", ");
+                int social= ssn.length;
+                // for(String i:ssn) {
+                //}
+                for(int i=0;i<social;i++){
+        driver.findElement(By.id("BodyContentPlaceHolder_pTaxId")).sendKeys(ssn[i]);                                                    // Sending SSN Number in form of i
+        driver.findElement(By.id("BodyContentPlaceHolder_pCanDisplayBusinessCD_0")).click();                                                       // Business CD yes
+        driver.findElement(By.id("BodyContentPlaceHolder_pAddButton")).click();                                                                    // Submit button
+        //for (String j : nameOfEntity)
+        if (driver.getCurrentUrl().equals("https://test.casso.dollarbank.com/Admin/TaxIdMaintenance/SelectTaxEntity.aspx")) {
+        driver.findElement(By.xpath("//*[normalize-space(text())='" + nameOfEntityName[p] + "']/parent::tr/td[1]/input")).click();                 //normalize-space is to remove spaces and name of entity is a name of Company which user wants to select from a list
+        driver.findElement(By.id("BodyContentPlaceHolder_pAddButton")).click();
+        Assert.assertEquals("Tax ID Add Was Successful.", "Tax ID Add Was Successful.");
+        driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();
+
+        } else {
+        Assert.assertEquals("Tax ID Add Was Successful.", "Tax ID Add Was Successful.");                                                       //Verification of TaxID
+        }
+        p++;
+
+
+        }
+
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();                                                                        // Click on Accounts Tab
+        driver.findElement(By.id("BodyContentPlaceHolder_pSetupAccountsButton")).click();                                                              // Setup Accounts
+        int checkBox = driver.findElements(By.xpath("//table[@id='BodyContentPlaceHolder_pAvailableAcctsTable'] //input[@type='checkbox']")).size();
+        for (int k=1; k<=checkBox;k++) {
+        driver.findElement(By.xpath("(//td[@class='CheckBox'])[" + k + "]")).click();
+        WebElement accountNumberText= driver.findElement(By.xpath("(//td[@class='AccountNumber HighlightedColumn'])[" + k + "]"));
+        String accountNumberValue = accountNumberText.getText();
+        if(accountNumberValue.startsWith("5")) {
+        driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("Checking");
+        }
+        if(accountNumberValue.startsWith("4")){
+        driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("Savings");
+        }
+        if(accountNumberValue.startsWith("6")){
+        driver.findElement(By.xpath("(//input[@type='text'])[" + k + "]")).sendKeys("CD");
+        }
+        }
+        int n=0;
+        String[] placeHolderName =placeHolder.split(", ");
+        String[] nickNameName =nickName.split(", ");
+
+        for(String l: placeHolderName) {
+        driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "']")).click();
+        driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "']")).click();
+        driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "TXT']")).clear();
+        driver.findElement(By.xpath("//input[@name= 'ctl00$BodyContentPlaceHolder$" + l + "TXT']")).sendKeys(nickNameName[n]);
+        n++;
+        }
+        driver.findElement(By.id("BodyContentPlaceHolder_pAddAccountsButton")).click();                                                                // Add selected accounts
+        driver.findElement(By.id("BodyContentPlaceHolder_pConfirmAddAccountsButton")).click();                                                         // Confirm Add
+        Assert.assertEquals("Account Add Was Successful.", "Account Add Was Successful.");                                                             // Verification
+
+        driver.findElement(By.xpath("//*[@id=\"Users-Tab\"]/span")).click();
+        Assert.assertEquals("User Maintenance - Create New User", "User Maintenance - Create New User");
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAddNewUser")).click();                                                                      // Add new user button
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserId")).sendKeys(userID);                                                                   // Entering userID
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserName")).sendKeys(userName);                                                               // Entering userName
+        driver.findElement(By.id("BodyContentPlaceHolder_pUserEmail")).sendKeys(userEmail);                                                             // Entering user email
+        driver.findElement(By.id("BodyContentPlaceHolder_mobileNumber")).sendKeys(userMobileNumber);                                                    // Entering user phone number
+        driver.findElement(By.id("BodyContentPlaceHolder_pTokenModel_2")).click();                                                                      // Non token radio button
+        driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCDAccess")).click();                                                                  // Business CDs
+        driver.findElement(By.id("BodyContentPlaceHolder_pCorporateVisaAccess")).click();                                                               // Corporate Credit Card
+        driver.findElement(By.id("BodyContentPlaceHolder_ssoAccess")).click();                                                                          // Multi purpose login
+        driver.findElement(By.id("BodyContentPlaceHolder_pARP")).click();                                                                               // Account Reconcilement
+        driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();                                                                            // Alerts
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAddContinue")).click();                                                                     // Continue button
+        Assert.assertEquals("User Maintenance - Approve User Changes", "User Maintenance - Approve User Changes");                                      // Verify Approve user changes
+        driver.findElement(By.id("BodyContentPlaceHolder_btnAppContinue")).click();                                                                     // Continue button
+        Assert.assertEquals("Welcome Letter Generated.", "Welcome Letter Generated.");                                                                  // Verifying user created or not
+        driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();                                                                       // Close button
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();                                                                         // Clicking on Accounts Tab
+        int numberOfCheckboxes = driver.findElements(By.xpath("//input[@type='checkbox']")).size();
+        for (int j = 2; j < numberOfCheckboxes; j++) {
+        driver.findElement(By.xpath("//table[@id='BodyContentPlaceHolder_pCompanyAccountsTable']/tbody/tr["+j+"]/td/input")).click();
+        Thread.sleep(100L);
+        driver.findElement(By.id("BodyContentPlaceHolder_pEditAccountButton")).click();                                                                 // Modify Account
+          /*  for(int alerts : modifyAccountsAlerts){
+                if(alerts == 1){
+                                                                                       // Alerts
+                }
+            }
+        driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();
+        driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCD")).click();                                                                        // Business Cds
+        driver.findElement(By.id("BodyContentPlaceHolder_reconcilements")).click();                                                                     // Reconcilement
+        driver.findElement(By.id("BodyContentPlaceHolder_pMultipurposeEdit")).click();                                                                  // Multi purpose SSO
+        driver.findElement(By.id("BodyContentPlaceHolder_pLoanActivityEdit")).click();                                                                  // Loan Activity
+        driver.findElement(By.id("BodyContentPlaceHolder_pAvailableHoldsEdit")).click();                                                                // Available holds
+        driver.findElement(By.id("BodyContentPlaceHolder_pConsolidatedReportsEdit")).click();                                                           // Consolidated reports
+        driver.findElement(By.id("BodyContentPlaceHolder_pContinue")).click();                                                                          // Continue button
+        driver.findElement(By.id("BodyContentPlaceHolder_pConfirm")).click();                                                                           // Confirm button
+        Assert.assertEquals("Account Access Edit Was Successful.", "Account Access Edit Was Successful.");                                              // Verification
+        driver.findElement(By.id("BodyContentPlaceHolder_pCancel")).click();                                                                            // Cancel button
+        }
+
+        driver.findElement(By.xpath("//*[@id=\"Accounts-Tab\"]/span")).click();
+        Assert.assertEquals("Account Maintenance", "Account Maintenance");
+        for (int j = 2; j < numberOfCheckboxes; j++) {
+        driver.findElement(By.xpath("//table[@id='BodyContentPlaceHolder_pCompanyAccountsTable']/tbody/tr[" +j+ "]/td/input")).click();
+        Thread.sleep(100L);
+        driver.findElement(By.id("BodyContentPlaceHolder_pEditAccountAccessButton")).click();
+        driver.findElement(By.name("ctl00$BodyContentPlaceHolder$AccountRepeater$ctl00$UserGroup")).click();
+        driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_addSelUser_0")).click();                                                    // Clicking on selected users
+        driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_confirmAddSelUser_0")).click();                                             // Confirming add user
+        driver.findElement(By.name("ctl00$BodyContentPlaceHolder$AccountRepeater$ctl00$UserGroup")).click();                                         // Selecting radio button again
+        driver.findElement(By.id("BodyContentPlaceHolder_AccountRepeater_changeUserAccess_0")).click();                                              // Change user Access button
+        driver.findElement(By.id("BodyContentPlaceHolder_pARP")).click();                                                                            // Account reconcilement (ARP)
+        driver.findElement(By.id("BodyContentPlaceHolder_pARPInputIssue")).click();                                                                  // ARP Create single issue
+        driver.findElement(By.id("BodyContentPlaceHolder_pARPEditIssue")).click();                                                                   // Arp Edit Issue
+        driver.findElement(By.id("BodyContentPlaceHolder_pAlerts")).click();                                                                         // Alerts
+        driver.findElement(By.id("BodyContentPlaceHolder_pBusinessCDPurchase")).click();                                                             // Business CD Purchase
+        driver.findElement(By.id("BodyContentPlaceHolder_pMultipurposeEdit")).click();                                                               // Multi purpose SSO
+        driver.findElement(By.id("BodyContentPlaceHolder_pLoanActivityEdit")).click();                                                               // Loan Activity
+        driver.findElement(By.id("BodyContentPlaceHolder_pAvailableHoldsEdit")).click();                                                             // Available holds
+        driver.findElement(By.id("BodyContentPlaceHolder_pConsolidatedReportsEdit")).click();                                                        // Consolidated reports
+        driver.findElement(By.id("BodyContentPlaceHolder_pContinue")).click();
+        driver.findElement(By.id("BodyContentPlaceHolder_pConfirm")).click();
+        Assert.assertEquals("User Account Permissions Successfully Updated.", "User Account Permissions Successfully Updated.");
+        driver.findElement(By.id("BodyContentPlaceHolder_pCloseButton")).click();
+        driver.findElement(By.id("BodyContentPlaceHolder_cancel")).click();  // Cancel button
+        }
+
+        }
+
+
+
+
+
+
+
+
+@DataProvider(name="drivedata")
+public Object[][] getData() throws IOException {
+
+        FileInputStream fis= new FileInputStream("C:\\Users\\10001926\\eclipse-workspace\\testdata.xlsx");
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        int rowCount = sheet.getPhysicalNumberOfRows();
+        XSSFRow row = sheet.getRow(0);
+        int colCount=row.getLastCellNum();
+
+        Object data[][] = new Object[colCount-1][rowCount-1];
+        for(int i=0;i<rowCount-1;i++) {
+        row=sheet.getRow(i+1);
+        for(int j=0;j<colCount-1;j++) {
+        XSSFCell cell = row.getCell(j+1);
+        data[j][i] = formatter.formatCellValue(cell);
+
+
+        }
+        }
+        return data;
+
+        }
+
+@AfterMethod
+public void takeScreenShotOnFailure(ITestResult testResult) throws IOException {
+        if (testResult.getStatus() == ITestResult.FAILURE) {
+        System.out.println(testResult.getStatus());
+        File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        FileUtils.copyFile(scrFile, new File("errorScreenshots\\" + testResult.getName() +  ".jpg"));
+        }
+        }
+
+
+        }
+
+
+ */
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+					
