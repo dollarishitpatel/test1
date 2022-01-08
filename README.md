@@ -1793,4 +1793,257 @@ public class DollarAdminACI {
 
 }
 
+					       
+					       
+					       
+					       
+					       
+					       
+					       
+					       ===================================================================
+					       
+					       
+					       What is API?
+
+Where we require API?
+
+Client - Server : Client means front end, Server means Backend
+
+Marriott is built in Java
+Hotels.com is built in .net
+If Marriott needs to post all the details of their rooms on hotles.com how will they do it?
+Frontend -- Backend -- Database -- Backend -- Frontend
+
+Hotels.com frontend will take all details of customers..Date,room type etc -- Will go to Hotels.com backend and find webserver for marriott -- data will be send to marriott backend -- data will go to marriott database -- data will be retrived and will give back to hotles.com backend --and then hotles.com frontend
+
+API is independent to any programming language
+They can talk on HTTP Protocol. Sending it in one format JSON or XML
+
+API are of two types:
+SOAP API and REST API
+
+SOAP API:
+1) SOAP
+Request and respond is in soap protocol
+uses XML
+Simple object access protocol
+
+SOAP message have ENVELOPE, Header, Body, Fault
+
+WSDL: 
+Webservices means collection of operations(Operation1: Search hotels with destination, Search hotels in paris)
+Contract of webservices is called WSDL
+
+
+
+
+
+REST API:
+EndPoint/BASE URI: Address where API is hosted on the server
+To communicate with REST API we will use differnet HTTP Methods
+GET, POST, PUT and DELETE
+
+
+GET- The GET method is used to extract information from the given server using a given URI. While using GET request, it should only extract data and should have no other effect on the data. No Payload/Body required
+
+How to send input data in GET?
+Ans: Using Query Parameters
+
+
+POST- A POST request is used to send data to the server, for example, customer information, file upload, etc. using HTML forms.
+CREATE Reservation we will use POST HTTP Request
+How to send input data in POST?
+Ans: Using Form Parameters /Body Payload
+
+
+
+
+PUT- Replaces all current representations of the target resource with the uploaded content.
+UPDATE Reservation by changing email or phone number
+
+DELETE- Removes all current representations of the target resource given by a URI.
+Delete Reservation
+
+
+Resources:
+Resources represent API/Collection which can be accessed from the Server
+
+Google.com/maps/newyork
+google.com/search
+google.com/images
+
+
+Path Parameters:
+Path parameters are variable parts of a URL path. They are typically used to point to a specific resource within a collection, such as a user identified by ID
+
+IMAGES, DOCS, ORDERS are resoucre and the number after that are Path Parameters
+
+https://www.google.com/Images/1123343
+https://www.google.com/docs/1123343
+https://amazon.com/orders/112
+
+https://www.google.com/search?q=newyork&oq=newyork&aqs=chrome..69i57j0l7.2501j0j7&sourceid=chrome&ie=UTF-8
+
+
+
+Query Parameters:
+Query Parameter is used to sort/filter the resources.
+
+Query Parameters are identified with?””
+
+https://amazon.com/orders?sort_by=2/20/2020&depaartment=automotive
+
+
+
+Headers/Cookies:
+
+Headers represent the meta-data associated with the API request and response. In layman terms, we were sending Additional details to API to process our request.
+Example : Authorization details
+
+
+
+
+
+End Point Request URL can be constructed as below
+Base URL/resource/(Query/Path)Parameters
+
+https://www.hotels.com/search.do
+
+					       
+					       
+					       ===========================================================================================
+					       
+					       
+					       To talk between two wesbsite we need webservices
+Two types of webservices 1) SOAP and 2) REST
+
+1) SOAP
+Request and respond is in soap protocol
+uses XML
+Simple object access protocol
+
+SOAP message have ENVELOPE, Header, Body, Fault
+
+WSDL: 
+Webservices means collection of operations(Operation1: Search hotels with destination, Search hotels in paris)
+Contract of webservices is called WSDL
+
+
+
+
+
+Endpoint is where the webservices are hosted 
+
+import com.eviware.soapui.support.XmlHolder
+import com.eviware.soapui.impl.wsdl.testcase.WsdlTestRunContext
+
+log.info "Hello this is my first program"
+
+//Context variable is used to access and modify the properties of your testcase
+//rahulonlinetutor@gmail.com
+//scope of context lies in Testcase only!
+
+log.info context.expand('${#TestCase#name}')
+
+log.info context.expand('${#TestCase#age}')
+// To access/modify any property you have to come through its parent only
+//Project->Test Suite -> Test Cases_> TestStep
+log.info testRunner.testCase.testSuite.testCases["GetEmployee"].getPropertyValue("id")
+ testRunner.testCase.testSuite.testCases["GetEmployee"].setPropertyValue("id","123")
+log.info testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue("age")
+
+log.info testRunner.testCase.getPropertyValue("dept")
+
+log.info testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].getPropertyValue("Request")
+
+def project=testRunner.testCase.testSuite.project
+project.getPropertyValue("gender")
+
+//Hit Add employee Request with properties from Testcase level.
+
+def addReq=testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"].getPropertyValue("Request")
+def name=testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue("name")
+def id=testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue("id")
+def age=testRunner.testCase.testSuite.testCases["AddEmployee"].getPropertyValue("age")
+ def xmlAdd= new XmlHolder(addReq) //
+
+ xmlAdd.setNodeValue("//typ:addEmployee/typ:name",name)
+ 
+ xmlAdd.setNodeValue("//typ:addEmployee/typ:id",id)
+  xmlAdd.setNodeValue("//typ:addEmployee/typ:Department","cse")
+   xmlAdd.setNodeValue("//typ:addEmployee/typ:age",age)
+  def newAddXml= xmlAdd.getXml();
+
+  testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"].setPropertyValue("Request",newAddXml)
+  //log.info newAddXml
+ 
+ //call the service-
+ //context of AddEmployee testcase should be passed as Add step which we are trying to run belongs to that Testcase
+
+def addTestStep=testRunner.testCase.testSuite.testCases["AddEmployee"].testSteps["add"]
+def contextAddEmployee= new WsdlTestRunContext(addTestStep);
+ 
+ addTestStep.run(testRunner,contextAddEmployee)
+
+ //Hit GetEmployee and generate response..Validate the response if it have the name which added in our earlier Step
+
+ def getReq=testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].getPropertyValue("Request")
+def getEmpxml= new XmlHolder(getReq)
+ getEmpxml.setNodeValue("//typ:getEmployeeDetails/typ:employeeName",name)
+ def newgetEmpxml=getEmpxml.getXml()
+testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].setPropertyValue("Request",newgetEmpxml)
+
+def getTestStep= testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"];
+
+def contextGetEmployee= new WsdlTestRunContext(getTestStep);
+getTestStep.run(testRunner,contextGetEmployee)
+
+//Validation -
+ def getRes=testRunner.testCase.testSuite.testCases["GetEmployee"].testSteps["get"].getPropertyValue("Response")
+ 
+def getEmpRes= new XmlHolder(getRes)
+def Getresponse= getEmpRes.getNodeValue("//ns:name")
+log.info Getresponse
+
+log.info name
+
+assert Getresponse==name
+
+
+
+
+XPATH Assertion in SOAP UI:
+//m:NumberToDollarsResult   - use to go to particular child
+
+
+
+
+
+2) REST
+Request and respond is in rest style
+Uses JSON or XML
+
+
+SOAP UI is used as an ide to test this api
+
+BaseURL+Resources+Parameters makes REST API
+
+Reperesents everything with a unique ID
+
+GET, POST, PUT, DELETE
+
+Get is used to extract from the server
+Post is used to send data to the server
+
+
+GET request is given in one url 
+POST is given in different module and cannot use URL
+
+Each paramter are seprated by &
+
+PAyload means Body in POST Request. USername and paswword are given in payload
+
+
+
+
 					
